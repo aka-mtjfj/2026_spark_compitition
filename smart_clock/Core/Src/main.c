@@ -104,19 +104,19 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	
-	uint16_t Menu2;
+	uint16_t Menu1_ret;
   while (1)
   {
-		Menu2=Menu1();
-			if(Menu2==1)
+		Menu1_ret=Menu1();
+			if(Menu1_ret==1)
 			{
 				Menu2_Timer();
 			}
-			else if(Menu2==2)
+			else if(Menu1_ret==2)
 			{
 				Menu2_Clock();
 			}
-			else if(Menu2==3)
+			else if(Menu1_ret==3)
 				
 			{
 				Menu2_Setting();
