@@ -1933,19 +1933,19 @@ Image Symbol Table
     i._sputc                                 0x0800538a   Section        0  printfa.o(i._sputc)
     HAL_RCC_GetSysClockFreq.aPredivFactorTable 0x080053ac   Data           2  stm32f1xx_hal_rcc.o(.rodata.HAL_RCC_GetSysClockFreq.aPredivFactorTable)
     [Anonymous Symbol]                       0x080053ac   Section        0  stm32f1xx_hal_rcc.o(.rodata.HAL_RCC_GetSysClockFreq.aPredivFactorTable)
-    HAL_RCC_GetSysClockFreq.aPLLMULFactorTable 0x08006484   Data          16  stm32f1xx_hal_rcc.o(.rodata.cst16)
-    [Anonymous Symbol]                       0x08006484   Section        0  stm32f1xx_hal_rcc.o(.rodata.cst16)
-    .L.str.3                                 0x08006494   Data          18  menu.o(.rodata.str1.1)
-    [Anonymous Symbol]                       0x08006494   Section        0  menu.o(.rodata.str1.1)
-    .L.str.2                                 0x080064a6   Data          19  menu.o(.rodata.str1.1)
-    .L.str                                   0x080064b9   Data          19  menu.o(.rodata.str1.1)
-    .L.str.9                                 0x080064cc   Data          27  menu.o(.rodata.str1.1)
-    .L.str.7                                 0x080064e7   Data          30  menu.o(.rodata.str1.1)
-    .L.str.4                                 0x08006505   Data          30  menu.o(.rodata.str1.1)
-    .L.str.1                                 0x08006523   Data          21  menu.o(.rodata.str1.1)
-    .L.str.8                                 0x08006538   Data          27  menu.o(.rodata.str1.1)
-    .L.str.6                                 0x08006553   Data          30  menu.o(.rodata.str1.1)
-    .L.str.5                                 0x08006571   Data          21  menu.o(.rodata.str1.1)
+    HAL_RCC_GetSysClockFreq.aPLLMULFactorTable 0x08006053   Data          16  stm32f1xx_hal_rcc.o(.rodata.cst16)
+    [Anonymous Symbol]                       0x08006053   Section        0  stm32f1xx_hal_rcc.o(.rodata.cst16)
+    .L.str.3                                 0x08006063   Data          18  menu.o(.rodata.str1.1)
+    [Anonymous Symbol]                       0x08006063   Section        0  menu.o(.rodata.str1.1)
+    .L.str.2                                 0x08006075   Data          19  menu.o(.rodata.str1.1)
+    .L.str                                   0x08006088   Data          19  menu.o(.rodata.str1.1)
+    .L.str.9                                 0x0800609b   Data          27  menu.o(.rodata.str1.1)
+    .L.str.7                                 0x080060b6   Data          30  menu.o(.rodata.str1.1)
+    .L.str.4                                 0x080060d4   Data          30  menu.o(.rodata.str1.1)
+    .L.str.1                                 0x080060f2   Data          21  menu.o(.rodata.str1.1)
+    .L.str.8                                 0x08006107   Data          27  menu.o(.rodata.str1.1)
+    .L.str.6                                 0x08006122   Data          30  menu.o(.rodata.str1.1)
+    .L.str.5                                 0x08006140   Data          21  menu.o(.rodata.str1.1)
     .L_MergedGlobals                         0x20000000   Data           8  stm32f1xx_hal.o(.data..L_MergedGlobals)
     [Anonymous Symbol]                       0x20000000   Section        0  stm32f1xx_hal.o(.data..L_MergedGlobals)
     .L_MergedGlobals                         0x20000008   Data          20  menu.o(.data..L_MergedGlobals)
@@ -2132,11 +2132,11 @@ Image Symbol Table
     __scatterload_zeroinit                   0x08004ac9   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
     AHBPrescTable                            0x08005394   Data          16  system_stm32f1xx.o(.rodata.AHBPrescTable)
     APBPrescTable                            0x080053a4   Data           8  system_stm32f1xx.o(.rodata.APBPrescTable)
-    OLED_CF16x16                             0x080053ae   Data        2220  oled_data.o(.rodata.OLED_CF16x16)
-    OLED_F6x8                                0x08005c5a   Data         570  oled_data.o(.rodata.OLED_F6x8)
-    OLED_F8x16                               0x08005e94   Data        1520  oled_data.o(.rodata.OLED_F8x16)
-    Region$$Table$$Base                      0x08006588   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x080065a8   Number         0  anon$$obj.o(Region$$Table)
+    OLED_CF16x16                             0x080053ae   Data        1147  oled_data.o(.rodata.OLED_CF16x16)
+    OLED_F6x8                                0x08005829   Data         570  oled_data.o(.rodata.OLED_F6x8)
+    OLED_F8x16                               0x08005a63   Data        1520  oled_data.o(.rodata.OLED_F8x16)
+    Region$$Table$$Base                      0x08006158   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x08006178   Number         0  anon$$obj.o(Region$$Table)
     uwTickFreq                               0x20000000   Data           1  stm32f1xx_hal.o(.data..L_MergedGlobals)
     uwTickPrio                               0x20000004   Data           4  stm32f1xx_hal.o(.data..L_MergedGlobals)
     flag                                     0x20000008   Data           1  menu.o(.data..L_MergedGlobals)
@@ -2166,9 +2166,9 @@ Memory Map of the image
 
   Image Entry point : 0x080000ed
 
-  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x000065c8, Max: 0x00010000, ABSOLUTE)
+  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00006198, Max: 0x00010000, ABSOLUTE)
 
-    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x000065a8, Max: 0x00010000, ABSOLUTE)
+    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00006178, Max: 0x00010000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -2330,32 +2330,32 @@ Memory Map of the image
     0x08005394   0x08005394   0x00000010   Data   RO          858    .rodata.AHBPrescTable  system_stm32f1xx.o
     0x080053a4   0x080053a4   0x00000008   Data   RO          859    .rodata.APBPrescTable  system_stm32f1xx.o
     0x080053ac   0x080053ac   0x00000002   Data   RO          290    .rodata.HAL_RCC_GetSysClockFreq.aPredivFactorTable  stm32f1xx_hal_rcc.o
-    0x080053ae   0x080053ae   0x000008ac   Data   RO          987    .rodata.OLED_CF16x16  oled_data.o
-    0x08005c5a   0x08005c5a   0x0000023a   Data   RO          986    .rodata.OLED_F6x8   oled_data.o
-    0x08005e94   0x08005e94   0x000005f0   Data   RO          985    .rodata.OLED_F8x16  oled_data.o
-    0x08006484   0x08006484   0x00000010   Data   RO          289    .rodata.cst16       stm32f1xx_hal_rcc.o
-    0x08006494   0x08006494   0x000000f2   Data   RO         1008    .rodata.str1.1      menu.o
-    0x08006586   0x08006586   0x00000002   PAD
-    0x08006588   0x08006588   0x00000020   Data   RO         1175    Region$$Table       anon$$obj.o
+    0x080053ae   0x080053ae   0x0000047b   Data   RO          987    .rodata.OLED_CF16x16  oled_data.o
+    0x08005829   0x08005829   0x0000023a   Data   RO          986    .rodata.OLED_F6x8   oled_data.o
+    0x08005a63   0x08005a63   0x000005f0   Data   RO          985    .rodata.OLED_F8x16  oled_data.o
+    0x08006053   0x08006053   0x00000010   Data   RO          289    .rodata.cst16       stm32f1xx_hal_rcc.o
+    0x08006063   0x08006063   0x000000f2   Data   RO         1008    .rodata.str1.1      menu.o
+    0x08006155   0x08006155   0x00000003   PAD
+    0x08006158   0x08006158   0x00000020   Data   RO         1175    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x080065a8, Size: 0x00000890, Max: 0x00005000, ABSOLUTE)
+    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x08006178, Size: 0x00000890, Max: 0x00005000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000000   0x080065a8   0x00000008   Data   RW          252    .data..L_MergedGlobals  stm32f1xx_hal.o
-    0x20000008   0x080065b0   0x00000014   Data   RW         1009    .data..L_MergedGlobals  menu.o
-    0x2000001c   0x080065c4   0x00000004   Data   RW          857    .data.SystemCoreClock  system_stm32f1xx.o
+    0x20000000   0x08006178   0x00000008   Data   RW          252    .data..L_MergedGlobals  stm32f1xx_hal.o
+    0x20000008   0x08006180   0x00000014   Data   RW         1009    .data..L_MergedGlobals  menu.o
+    0x2000001c   0x08006194   0x00000004   Data   RW          857    .data.SystemCoreClock  system_stm32f1xx.o
     0x20000020        -       0x00000004   Zero   RW          890    .bss..L_MergedGlobals  key.o
     0x20000024        -       0x00000001   Zero   RW          975    .bss.AniFlag        oled.o
-    0x20000025   0x080065c8   0x00000003   PAD
+    0x20000025   0x08006198   0x00000003   PAD
     0x20000028        -       0x00000400   Zero   RW          976    .bss.OLED_DisplayBuf  oled.o
     0x20000428        -       0x00000003   Zero   RW         1007    .bss.clock_yn       menu.o
-    0x2000042b   0x080065c8   0x00000001   PAD
+    0x2000042b   0x08006198   0x00000001   PAD
     0x2000042c        -       0x00000014   Zero   RW           41    .bss.hrtc           rtc.o
     0x20000440        -       0x00000048   Zero   RW           56    .bss.htim2          tim.o
     0x20000488        -       0x00000003   Zero   RW         1006    .bss.timer_yn       menu.o
-    0x2000048b   0x080065c8   0x00000001   PAD
+    0x2000048b   0x08006198   0x00000001   PAD
     0x2000048c        -       0x00000004   Zero   RW          251    .bss.uwTick         stm32f1xx_hal.o
     0x20000490        -       0x00000400   Zero   RW            1    STACK               startup_stm32f103xb.o
 
@@ -2372,7 +2372,7 @@ Image component sizes
        208          0          0          0          0       4297   main.o
       3898        142        242         20          6       7411   menu.o
       8016          0          0          0       1025      56093   oled.o
-         0          0       4310          0          0        790   oled_data.o
+         0          0       3237          0          0        790   oled_data.o
        118          0          0          0         20       2644   rtc.o
         36          8        236          0       1024        800   startup_stm32f103xb.o
        148          0          0          8          4       5768   stm32f1xx_hal.o
@@ -2390,9 +2390,9 @@ Image component sizes
        174          0          0          0         72       5920   tim.o
 
     ----------------------------------------------------------------------
-     17416        192       4864         32       2160     224615   Object Totals
+     17416        192       3792         32       2160     224615   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-        94          0          2          0          5          0   (incl. Padding)
+        94          0          3          0          5          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -2445,15 +2445,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     21160        296       4864         32       2160     225271   Grand Totals
-     21160        296       4864         32       2160     225271   ELF Image Totals
-     21160        296       4864         32          0          0   ROM Totals
+     21160        296       3792         32       2160     225271   Grand Totals
+     21160        296       3792         32       2160     225271   ELF Image Totals
+     21160        296       3792         32          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                26024 (  25.41kB)
+    Total RO  Size (Code + RO Data)                24952 (  24.37kB)
     Total RW  Size (RW Data + ZI Data)              2192 (   2.14kB)
-    Total ROM Size (Code + RO Data + RW Data)      26056 (  25.45kB)
+    Total ROM Size (Code + RO Data + RW Data)      24984 (  24.40kB)
 
 ==============================================================================
 
