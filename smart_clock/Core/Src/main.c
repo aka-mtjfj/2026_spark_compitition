@@ -94,10 +94,13 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   MX_RTC_Init();
+  MX_TIM1_Init();
+  MX_TIM3_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
 	OLED_Init();
 	Key_Init();
-	HAL_TIM_Base_Start_IT(&htim2);
+	HAL_TIM_Base_Start_IT(&htim2);//work for key,don't close
 	
   /* USER CODE END 2 */
 
@@ -121,6 +124,7 @@ int main(void)
 			{
 				Menu2_Setting();
 			}
+			
 
 			
 		

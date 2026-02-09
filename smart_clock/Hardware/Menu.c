@@ -2,7 +2,7 @@
 #include "OLED.h"
 #include "Key.h"
 #include "Delay.h"
-#include "MyRTC.h"
+#include "tim.h"
 uint8_t flag=1;
 uint8_t DirectFlag=2;//用于指定动画向上还是向下
 #define MENU1_LAST_CHOOSE   3
@@ -16,7 +16,8 @@ uint8_t timer_yn[3]={0};//每个闹钟是否开启的标志，全局变量，定
 uint8_t clock1_arr[3]={7,20,0};
 uint8_t clock2_arr[3]={13,40,0};
 uint8_t clock3_arr[3]={19,25,0};//参数，具体闹钟函数传参更改
-uint8_t clock_yn[3]={0};//每个闹钟是否开启的标志，全局变量，定时器到时间中断更改这里的状态即可
+uint8_t clock_yn[3]={2,2,2};//每个闹钟是否开启的标志，全局变量，定时器到时间中断更改这里的状态即可,开始默认关闭
+uint32_t timer1_cnt=0,timer2_cnt=0,timer3_cnt=0;
 /**
   * @brief ：函数描述:菜单一，用于第一级模式选择
   * @param ：参数描述:无
@@ -903,7 +904,7 @@ uint8_t Menu3_Timer_Setting(uint8_t* timer_arr)
 	}
 	else if(Timer_setting_OK==5)
 	{
-		//确认并退出
+		//确认并退出,确认时已经写入全局数组
 		for(uint8_t i=0;i<3;i++)
 		{
 			timer_arr[i]=tmp_arr[i];
@@ -1049,20 +1050,16 @@ if(timer_yn[2]==1)
 			if(ret==1)
 			{
 				timer_yn[0]=1;
-				//
+				//确认时已经参数已经写入全局数组
 				//设定时间为timer1_arr并启动，此处更改yn数组上面的循环显示会自动标上 * 标识符
-				//
-				//
-				//
-				//
+				timer1_cnt=timer1_arr[0]*3600+timer1_arr[1]*60+timer1_arr[2];//定时器总秒数
+
 			}
 			else if(ret==2)
 			{
 				timer_yn[0]=2;//第一行返回的话是0，但不对确认数组做处理
 				//关闭定时器，直接使用三个定时器对应，因为及时会闲置也要保证定时功能
-				//
-				//
-				//
+				//关闭即可，不需要管timer1_cnt
 			}
 		}
 			else	if(Menu3_Flag==3)
@@ -1070,21 +1067,16 @@ if(timer_yn[2]==1)
 			ret=Menu3_Timer_Setting(timer2_arr);
 						if(ret==1)
 			{
-				timer_yn[0]=1;
+				timer_yn[1]=1;
 				//
 				//设定时间为timer1_arr并启动，此处更改yn数组上面的循环显示会自动标上 * 标识符
-				//
-				//
-				//
-				//
+				timer2_cnt=timer2_arr[0]*3600+timer2_arr[1]*60+timer2_arr[2];
 			}
 			else if(ret==2)
 			{
-				timer_yn[0]=2;//第一行返回的话是0，但不对确认数组做处理
+				timer_yn[1]=2;//第一行返回的话是0，但不对确认数组做处理
 				//关闭定时器，直接使用三个定时器对应，因为及时会闲置也要保证定时功能
-				//
-				//
-				//
+
 			}
 		}
 			else	if(Menu3_Flag==4)
@@ -1092,22 +1084,32 @@ if(timer_yn[2]==1)
 			ret=Menu3_Timer_Setting(timer2_arr);
 						if(ret==1)
 			{
-				timer_yn[0]=1;
+				timer_yn[2]=1;
 				//
 				//设定时间为timer1_arr并启动，此处更改yn数组上面的循环显示会自动标上 * 标识符
-				//
-				//
-				//
-				//
+				timer3_cnt=timer3_arr[0]*3600+timer3_arr[1]*60+timer3_arr[2];
 			}
 			else if(ret==2)
 			{
-				timer_yn[0]=2;//第一行返回的话是0，但不对确认数组做处理
+				timer_yn[2]=2;//第一行返回的话是0，但不对确认数组做处理
 				//关闭定时器，直接使用三个定时器对应，因为及时会闲置也要保证定时功能
-				//
-				//
-				//
+
 			}
+		}
+		//使用一个定时器，如果一个定时都没有设置就关闭，否则一直开启，三个定时共用一个定时器
+		if(timer_yn[0]==2&&timer_yn[1]==2&&timer_yn[2]==2)
+		{
+				HAL_TIM_Base_Stop_IT(&htim1);
+				__HAL_TIM_SET_COUNTER(&htim1,0);
+		}
+		else
+			{
+				if((htim1.Instance->CR1 & TIM_CR1_CEN)==0)//如果yn不是全是2并且还没打开定时器，则打开
+			{
+				__HAL_TIM_SET_COUNTER(&htim1,0);
+				HAL_TIM_Base_Start_IT(&htim1);
+			}
+			
 		}
 	}
 }
