@@ -1,4 +1,4 @@
-#include "stm32f1xx.h"                // Device header
+#include "stm32f1xx.h"                  // Device header
 #include "tim.h"
 #include "key.h"
 #include "Menu.h"

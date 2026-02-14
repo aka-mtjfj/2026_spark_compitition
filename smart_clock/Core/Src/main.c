@@ -20,6 +20,7 @@
 #include "main.h"
 #include "rtc.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -97,11 +98,11 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 	OLED_Init();
 	Key_Init();
 	HAL_TIM_Base_Start_IT(&htim2);//work for key,don't close
-	
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -180,6 +181,10 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
+  /** Enables the Clock Security System
+  */
+  HAL_RCC_EnableCSS();
 }
 
 /* USER CODE BEGIN 4 */

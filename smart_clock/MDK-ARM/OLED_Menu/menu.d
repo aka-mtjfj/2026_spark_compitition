@@ -22,5 +22,7 @@ oled_menu/menu.o: ..\Hardware\Menu.c \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rtc_ex.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h \
+  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h \
   ..\Hardware\OLED.h ..\Hardware\OLED_Data.h ..\Hardware\Key.h \
-  ..\Hardware\Delay.h ..\Core\Inc\tim.h ..\Core\Inc\main.h
+  ..\Hardware\Delay.h ..\Core\Inc\tim.h ..\Core\Inc\main.h \
+  ..\MDK-ARM\user_rtc.h ..\Core\Inc\rtc.h ..\Core\Inc\usart.h

@@ -3,12 +3,15 @@
 #include "Key.h"
 #include "Delay.h"
 #include "tim.h"
+#include "user_rtc.h"
+#include "rtc.h"
+#include "usart.h"
 uint8_t flag=1;
 uint8_t DirectFlag=2;//用于指定动画向上还是向下
 #define MENU1_LAST_CHOOSE   3
 #define Timer_LAST_CHOOSE   4
 #define Clock_LAST_CHOOSE   4
-#define SETTING_LAST_CHOOSE   3
+#define SETTING_LAST_CHOOSE   4      //这里指四行
 uint8_t timer1_arr[3]={0,15,0};
 uint8_t timer2_arr[3]={0,30,0};
 uint8_t timer3_arr[3]={1,0,0};//参数，具体闹钟函数传参更改
@@ -18,6 +21,7 @@ uint8_t clock2_arr[3]={13,40,0};
 uint8_t clock3_arr[3]={19,25,0};//参数，具体闹钟函数传参更改
 uint8_t clock_yn[3]={2,2,2};//每个闹钟是否开启的标志，全局变量，定时器到时间中断更改这里的状态即可,开始默认关闭
 uint32_t timer1_cnt=0,timer2_cnt=0,timer3_cnt=0;
+uint32_t clock1_cnt=0,clock2_cnt=0,clock3_cnt=0;
 /**
   * @brief ：函数描述:菜单一，用于第一级模式选择
   * @param ：参数描述:无
@@ -54,7 +58,7 @@ uint16_t Menu1()
 		{
 			OLED_Clear();
 			OLED_Update();//先刷新一下
-			
+			OLED_AnimUpdate();
 			return flag;
 		}
 		switch(flag)//设定选择不同的选项时，对应显示的一级菜单，这里设置为超过4时翻页
@@ -96,7 +100,7 @@ uint16_t Menu1()
 				OLED_ShowString(0,32,"设置            ",OLED_8X16);
 				if(DirectFlag==1)
 				{
-					OLED_Animation(0,48,128,16,0,32,128,16);
+					OLED_Animation(0,48,128,0,0,32,128,16);
 				}
 				if(DirectFlag==2)
 				{
@@ -117,7 +121,7 @@ uint8_t Menu3_Clock_Setting(uint8_t* clock_arr)
 {
 	uint8_t tmp_arr[3];
 	uint8_t Clock_setting_flag=1;
-	uint8_t Clock_setting_direct=0;//动画滑动方向，1为向上，2为向下
+	uint8_t Clock_setting_direct=2;//动画滑动方向，1为向上，2为向下
 	uint8_t Clock_setting_OK=0;//确定按下的是哪一个
 	for(uint8_t i=0;i<3;i++)
 	{
@@ -126,11 +130,14 @@ uint8_t Menu3_Clock_Setting(uint8_t* clock_arr)
 	OLED_Clear();
 	OLED_ShowString(0,0,"<-               ",OLED_8X16);
 	OLED_Printf(0,16,OLED_8X16,"  %2d时%2d分%2d秒         ",tmp_arr[0],tmp_arr[1],tmp_arr[2]);
-	OLED_ShowString(0,48,"  确认    取消  ",OLED_8X16);
-	OLED_ReverseArea(0,0,16,16);
+	OLED_ShowString(0,48,"  确定    取消  ",OLED_8X16);
 	OLED_Update();//初始化一下时间设置页面
+	OLED_AnimUpdate();
 	while(1)
 	{
+	OLED_ShowString(0,0,"<-               ",OLED_8X16);
+	OLED_Printf(0,16,OLED_8X16,"  %2d时%2d分%2d秒         ",tmp_arr[0],tmp_arr[1],tmp_arr[2]);
+	OLED_ShowString(0,48,"  确定    取消  ",OLED_8X16);
 	uint8_t Keynum=Key_GetNum();
 	if(Keynum==1)
 		{
@@ -338,7 +345,7 @@ uint8_t Menu3_Clock_Setting(uint8_t* clock_arr)
 	else if(Clock_setting_OK==5)
 	{
 		//确认并退出
-		for(uint8_t i=0;i<3;i++)
+				for(uint8_t i=0;i<3;i++)//设定闹钟
 		{
 			clock_arr[i]=tmp_arr[i];
 		}
@@ -347,6 +354,7 @@ uint8_t Menu3_Clock_Setting(uint8_t* clock_arr)
 		else if(Clock_setting_OK==6)
 	{
 		//取消并退出
+		
 		return 2;
 	}
 }
@@ -362,7 +370,7 @@ uint16_t Menu2_Clock()
 {
 	uint8_t Menu3_Flag=0; 
 	uint8_t Keynum=0;
-	uint8_t Clock_Direct_Flag=0; //定时器菜单动画上下
+	uint8_t Clock_Direct_Flag=2; //定时器菜单动画上下
 	uint8_t Clock_flag=1;//设定初始指向第一行
 
 	uint8_t ret=0;
@@ -380,9 +388,22 @@ if(clock_yn[2]==1)
 	else
 		OLED_Printf(0,48,OLED_8X16,"%2d时%2d分%2d秒           ",clock3_arr[0],clock3_arr[1],clock3_arr[2]);
 	OLED_Update();//更新显示内容
+	OLED_AnimUpdate();
 	while(1)
 	{
-		
+			OLED_ShowString(0,0,"<-               ",OLED_8X16);//第一行是返回键
+	if(clock_yn[0]==1)
+		OLED_Printf(0,16,OLED_8X16,"%2d时%2d分%2d秒   *       ",clock1_arr[0],clock1_arr[1],clock1_arr[2]);//设定第一页的显示
+	else
+		OLED_Printf(0,16,OLED_8X16,"%2d时%2d分%2d秒           ",clock1_arr[0],clock1_arr[1],clock1_arr[2]);
+if(clock_yn[1]==1)
+		OLED_Printf(0,32,OLED_8X16,"%2d时%2d分%2d秒   *       ",clock2_arr[0],clock2_arr[1],clock2_arr[2]);//设定第一页的显示
+	else
+		OLED_Printf(0,32,OLED_8X16,"%2d时%2d分%2d秒           ",clock2_arr[0],clock2_arr[1],clock2_arr[2]);
+if(clock_yn[2]==1)
+		OLED_Printf(0,48,OLED_8X16,"%2d时%2d分%2d秒   *       ",clock3_arr[0],clock3_arr[1],clock3_arr[2]);//设定第一页的显示
+	else
+		OLED_Printf(0,48,OLED_8X16,"%2d时%2d分%2d秒           ",clock3_arr[0],clock3_arr[1],clock3_arr[2]);
 		Keynum=Key_GetNum();//没有按下的时候返回的是0
 		if(Keynum==1)
 		{
@@ -407,19 +428,6 @@ if(clock_yn[2]==1)
 			Menu3_Flag=Clock_flag;//确认选择
 			
 		}
-	OLED_ShowString(0,0,"<-               ",OLED_8X16);//第一行是返回键
-	if(clock_yn[0]==1)
-		OLED_Printf(0,16,OLED_8X16,"%d时%d分%d秒   *       ",clock1_arr[0],clock1_arr[1],clock1_arr[2]);//设定第一页的显示
-	else if(clock_yn[0]==2)
-		OLED_Printf(0,16,OLED_8X16,"%d时%d分%d秒           ",clock1_arr[0],clock1_arr[1],clock1_arr[2]);
-if(clock_yn[1]==1)
-		OLED_Printf(0,32,OLED_8X16,"%d时%d分%d秒   *       ",clock2_arr[0],clock2_arr[1],clock2_arr[2]);//设定第一页的显示
-	else if(clock_yn[1]==2)
-		OLED_Printf(0,32,OLED_8X16,"%d时%d分%d秒           ",clock2_arr[0],clock2_arr[1],clock2_arr[2]);
-if(clock_yn[2]==1)
-		OLED_Printf(0,48,OLED_8X16,"%d时%d分%d秒   *       ",clock3_arr[0],clock3_arr[1],clock3_arr[2]);//设定第一页的显示
-	else if(clock_yn[2]==2)
-		OLED_Printf(0,48,OLED_8X16,"%d时%d分%d秒           ",clock3_arr[0],clock3_arr[1],clock3_arr[2]);//只有一页，所以不需要对每个case进行讨论
 	//这里不需要update，因为下面的动画函数中会update一次
 	switch(Clock_flag)//上面已经做好了选择，这里给个显示
 		{
@@ -475,6 +483,7 @@ if(clock_yn[2]==1)
 		
 		if(Menu3_Flag==1)//和上面的显示其实可以交换，只有menu3_flag选择后才会进入
 		{
+			OLED_AnimUpdate();
 			return 0;//第一行返回
 		}
 			else	if(Menu3_Flag==2)
@@ -484,20 +493,14 @@ if(clock_yn[2]==1)
 			if(ret==1)
 			{
 				clock_yn[0]=1;
-				//
+				clock1_cnt=clock1_arr[0]*3600+clock1_arr[1]*60+clock1_arr[2];
 				//设定时间为clock1_arr并启动，此处更改yn数组上面的循环显示会自动标上 * 标识符
-				//
-				//
-				//
-				//
+				//这里直接将确认数组置一，此时只匹配时间，不匹配日期
 			}
 			else if(ret==2)
 			{
 				clock_yn[0]=2;//第一行返回的话是0，但不对确认数组做处理
-				//关闭定时器，直接使用三个定时器对应，因为及时会闲置也要保证定时功能
-				//
-				//
-				//
+
 			}
 		}
 			else	if(Menu3_Flag==3)
@@ -506,20 +509,12 @@ if(clock_yn[2]==1)
 						if(ret==1)
 			{
 				clock_yn[0]=1;
-				//
-				//设定时间为clock1_arr并启动，此处更改yn数组上面的循环显示会自动标上 * 标识符
-				//
-				//
-				//
-				//
+				clock2_cnt=clock2_arr[0]*3600+clock2_arr[1]*60+clock2_arr[2];
 			}
 			else if(ret==2)
 			{
 				clock_yn[0]=2;//第一行返回的话是0，但不对确认数组做处理
-				//关闭定时器，直接使用三个定时器对应，因为及时会闲置也要保证定时功能
-				//
-				//
-				//
+
 			}
 		}
 			else	if(Menu3_Flag==4)
@@ -528,20 +523,11 @@ if(clock_yn[2]==1)
 						if(ret==1)
 			{
 				clock_yn[0]=1;
-				//
-				//设定时间为clock1_arr并启动，此处更改yn数组上面的循环显示会自动标上 * 标识符
-				//
-				//
-				//
-				//
+				clock3_cnt=clock3_arr[0]*3600+clock3_arr[1]*60+clock3_arr[2];
 			}
 			else if(ret==2)
 			{
-				clock_yn[0]=2;//第一行返回的话是0，但不对确认数组做处理
-				//关闭定时器，直接使用三个定时器对应，因为及时会闲置也要保证定时功能
-				//
-				//
-				//
+				clock_yn[0]=2;
 			}
 		}
 	}
@@ -562,10 +548,16 @@ uint16_t Menu2_Setting()
 	OLED_ShowString(0,0,"<-              ",OLED_8X16);
 	OLED_ShowString(0,16,"省电模式              ",OLED_8X16);
 	OLED_ShowString(0,32,"wifi拓展          ",OLED_8X16);
-	OLED_ShowString(0,48,"关于闹钟             ",OLED_8X16);
+	OLED_ShowString(0,48,"关于闹钟             ",OLED_8X16);                                                                                                                                                                                                                                     
 	OLED_Update();
+	OLED_AnimUpdate();
 	while(1)
 	{
+			OLED_ShowString(0,0,"<-              ",OLED_8X16);
+	OLED_ShowString(0,16,"省电模式              ",OLED_8X16);
+	OLED_ShowString(0,32,"wifi拓展          ",OLED_8X16);
+	OLED_ShowString(0,48,"关于闹钟             ",OLED_8X16);//这里的循环每次必须要重写入一次，否则会混乱
+		 
 		Keynum=Key_GetNum();
 		if(Keynum==1)
 		{
@@ -646,6 +638,7 @@ uint16_t Menu2_Setting()
 		
 		if(Menu3_Flag==1)
 		{
+			OLED_AnimUpdate();
 			return 0;
 		}
 			else	if(Menu3_Flag==2)
@@ -684,22 +677,23 @@ uint8_t Menu3_Timer_Setting(uint8_t* timer_arr)
 	uint8_t tmp_arr[3];
 	uint8_t Keynum=0;
 	uint8_t Timer_setting_flag=1;
-	uint8_t timer_setting_direct=0;//动画滑动方向，1为向上，2为向下
+	uint8_t timer_setting_direct=2;//动画滑动方向，1为向上，2为向下
 	uint8_t Timer_setting_OK=0;//确定按下的是哪一个
+	uint8_t test[]="test\r\n";
 	for(uint8_t i=0;i<3;i++)
 	{
 		tmp_arr[i]=timer_arr[i];//复制下数组，确认更改后才写入
 	}
 	OLED_Clear();
-	OLED_ShowString(0,0,"<-               ",OLED_8X16);
-	OLED_Printf(0,16,OLED_8X16,"  %2d时%2d分%2d秒         ",tmp_arr[0],tmp_arr[1],tmp_arr[2]);
-	OLED_ShowString(0,48,"  确认    取消  ",OLED_8X16);
-	OLED_ReverseArea(0,0,16,16);
-	OLED_Update();//初始化一下时间设置页面
+
+	OLED_AnimUpdate();
 	while(1)
 	{
+	OLED_ShowString(0,0,"<-               ",OLED_8X16);
+	OLED_Printf(0,16,OLED_8X16,"  %2d时%2d分%2d秒         ",tmp_arr[0],tmp_arr[1],tmp_arr[2]);
+	OLED_ShowString(0,48,"  确定    取消  ",OLED_8X16);
 	uint8_t keynum=Key_GetNum();
-	if(Keynum==1)
+	if(keynum==1)
 		{
 			timer_setting_direct=1;
 			Timer_setting_flag--;
@@ -707,7 +701,7 @@ uint8_t Menu3_Timer_Setting(uint8_t* timer_arr)
 				Timer_setting_flag=6;//6是最后一个可按的位置（取消）
 			OLED_AnimUpdate();
 		}
-			else	if(Keynum==3)
+			else	if(keynum==3)
 		{
 			timer_setting_direct=2;
 			Timer_setting_flag++;
@@ -715,10 +709,10 @@ uint8_t Menu3_Timer_Setting(uint8_t* timer_arr)
 				Timer_setting_flag=1;
 			OLED_AnimUpdate();
 		}
-		else	if(Keynum==5)//上下调节更改timerflag，此时还没有选择menu3_flag
+		else	if(keynum==5)//上下调节更改timerflag，此时还没有选择menu3_flag
 		{
 			Timer_setting_OK=Timer_setting_flag;//确认选择
-			
+			OLED_AnimUpdate();
 		}
 		switch(Timer_setting_flag)//Timer_setting_flag在哪个位置的显示设置，界面不翻页，显示一次即可
 		{
@@ -729,7 +723,7 @@ uint8_t Menu3_Timer_Setting(uint8_t* timer_arr)
 				}
 				else if(timer_setting_direct==2)
 				{
-					OLED_Animation(0,0,0,0,0,0,16,16);
+					OLED_Animation(0,0,16,0,0,0,16,16);
 				}
 				break;
 		}
@@ -780,7 +774,7 @@ uint8_t Menu3_Timer_Setting(uint8_t* timer_arr)
 						case 6:{//取消
 				if(timer_setting_direct==1)
 				{
-					OLED_Animation(112,64,0,0,80,48,32,16);//实施动画移动,1是减
+					OLED_Animation(80,64,0,0,80,48,32,16);//实施动画移动,1是减
 				}
 				else if(timer_setting_direct==2)
 				{
@@ -790,7 +784,10 @@ uint8_t Menu3_Timer_Setting(uint8_t* timer_arr)
 		}
 	}
 	if(Timer_setting_OK==1)
+	{
+		OLED_AnimUpdate();
 		return 0;
+	}
 	else if(Timer_setting_OK==2)
 	{
 		OLED_ReverseArea(16,16,16,16);
@@ -928,7 +925,7 @@ uint8_t Menu3_Timer_Setting(uint8_t* timer_arr)
 uint16_t Menu2_Timer()
 {
 	uint8_t Menu3_Flag=0; 
-	uint8_t Timer_Direct_Flag=0; //定时器菜单动画上下
+	uint8_t Timer_Direct_Flag=2; //定时器菜单动画上下
 	uint8_t Timer_flag=1;//设定初始指向第一行
 	uint8_t Keynum=0;
 	uint8_t ret=0;
@@ -946,9 +943,23 @@ if(timer_yn[2]==1)
 	else
 		OLED_Printf(0,48,OLED_8X16,"%2d时%2d分%2d秒           ",timer3_arr[0],timer3_arr[1],timer3_arr[2]);
 	OLED_Update();//更新显示内容
+	OLED_AnimUpdate();
 	while(1)
 	{
-		
+			OLED_ShowString(0,0,"<-               ",OLED_8X16);//第一行是返回键
+	if(timer_yn[0]==1)
+		OLED_Printf(0,16,OLED_8X16,"%2d时%2d分%2d秒   *       ",timer1_arr[0],timer1_arr[1],timer1_arr[2]);//设定第一页的显示
+	else
+		OLED_Printf(0,16,OLED_8X16,"%2d时%2d分%2d秒           ",timer1_arr[0],timer1_arr[1],timer1_arr[2]);
+if(timer_yn[1]==1)
+		OLED_Printf(0,32,OLED_8X16,"%2d时%2d分%2d秒   *       ",timer2_arr[0],timer2_arr[1],timer2_arr[2]);//设定第一页的显示
+	else
+		OLED_Printf(0,32,OLED_8X16,"%2d时%2d分%2d秒           ",timer2_arr[0],timer2_arr[1],timer2_arr[2]);
+if(timer_yn[2]==1)
+		OLED_Printf(0,48,OLED_8X16,"%2d时%2d分%2d秒   *       ",timer3_arr[0],timer3_arr[1],timer3_arr[2]);//设定第一页的显示
+	else
+		OLED_Printf(0,48,OLED_8X16,"%2d时%2d分%2d秒           ",timer3_arr[0],timer3_arr[1],timer3_arr[2]);
+
 		Keynum=Key_GetNum();//没有按下的时候返回的是0
 		if(Keynum==1)
 		{
@@ -970,22 +981,11 @@ if(timer_yn[2]==1)
 		{
 			OLED_Clear();
 			OLED_Update();
+			OLED_AnimUpdate();//进入下一个函数可以初始更新
 			Menu3_Flag=Timer_flag;//确认选择
 			
 		}
-	OLED_ShowString(0,0,"<-               ",OLED_8X16);//第一行是返回键
-	if(timer_yn[0]==1)
-		OLED_Printf(0,16,OLED_8X16,"%d时%d分%d秒   *       ",timer1_arr[0],timer1_arr[1],timer1_arr[2]);//设定第一页的显示
-	else if(timer_yn[0]==2)
-		OLED_Printf(0,16,OLED_8X16,"%d时%d分%d秒           ",timer1_arr[0],timer1_arr[1],timer1_arr[2]);
-if(timer_yn[1]==1)
-		OLED_Printf(0,32,OLED_8X16,"%d时%d分%d秒   *       ",timer2_arr[0],timer2_arr[1],timer2_arr[2]);//设定第一页的显示
-	else if(timer_yn[1]==2)
-		OLED_Printf(0,32,OLED_8X16,"%d时%d分%d秒           ",timer2_arr[0],timer2_arr[1],timer2_arr[2]);
-if(timer_yn[2]==1)
-		OLED_Printf(0,48,OLED_8X16,"%d时%d分%d秒   *       ",timer3_arr[0],timer3_arr[1],timer3_arr[2]);//设定第一页的显示
-	else if(timer_yn[2]==2)
-		OLED_Printf(0,48,OLED_8X16,"%d时%d分%d秒           ",timer3_arr[0],timer3_arr[1],timer3_arr[2]);//只有一页，所以不需要对每个case进行讨论
+
 	//这里不需要update，因为下面的动画函数中会update一次
 		switch(Timer_flag)
 		{
@@ -993,7 +993,7 @@ if(timer_yn[2]==1)
 
 				if(Timer_Direct_Flag==2)
 				{
-					OLED_Animation(0,0,0,0,0,0,128,16);
+					OLED_Animation(0,0,128,0,0,0,128,16);
 				}
 				else if(Timer_Direct_Flag==1)//动画为减的动画
 				{
@@ -1041,6 +1041,7 @@ if(timer_yn[2]==1)
 		
 		if(Menu3_Flag==1)//和上面的显示其实可以交换，只有menu3_flag选择后才会进入
 		{
+			OLED_AnimUpdate();
 			return 0;//第一行返回
 		}
 			else	if(Menu3_Flag==2)
@@ -1061,6 +1062,7 @@ if(timer_yn[2]==1)
 				//关闭定时器，直接使用三个定时器对应，因为及时会闲置也要保证定时功能
 				//关闭即可，不需要管timer1_cnt
 			}
+			Menu3_Flag=0;//完成时间设置后重置选择序号，防止下次循环再次进入
 		}
 			else	if(Menu3_Flag==3)
 		{

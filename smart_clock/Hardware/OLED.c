@@ -24,7 +24,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdarg.h>
-
+#include "Delay.h"
 /**
   * 数据存储格式：
   * 纵向8点，高位在下，先从左到右，再从上到下
@@ -101,6 +101,7 @@ void OLED_W_SCL(uint8_t BitValue)
 	
 	/*如果单片机速度过快，可在此添加适量延时，以避免超出I2C通信的最大速度*/
 	//...
+	//Delay_us(3);
 }
 
 /**
@@ -118,6 +119,7 @@ void OLED_W_SDA(uint8_t BitValue)
 	
 	/*如果单片机速度过快，可在此添加适量延时，以避免超出I2C通信的最大速度*/
 	//...
+	//Delay_us(3);
 }
 
 /**
