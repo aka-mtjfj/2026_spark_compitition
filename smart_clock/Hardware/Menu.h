@@ -9,4 +9,7 @@ extern uint32_t timer1_cnt,timer2_cnt,timer3_cnt;
 extern uint32_t clock1_cnt,clock2_cnt,clock3_cnt;
 extern uint8_t timer_yn[3];
 extern uint8_t clock_yn[3];
+extern uint8_t clock1_arr[3];
+extern uint8_t clock2_arr[3];
+extern uint8_t clock3_arr[3];
 #endif
