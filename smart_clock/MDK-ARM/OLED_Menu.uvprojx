@@ -411,6 +411,11 @@
               <FilePath>.\user_rtc.h</FilePath>
             </File>
             <File>
+              <FileName>user_tim.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\user_tim.h</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/main.c</FilePath>
@@ -849,6 +854,16 @@
               <FileName>Menu.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Hardware\Menu.h</FilePath>
+            </File>
+            <File>
+              <FileName>buzz.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Hardware\buzz.c</FilePath>
+            </File>
+            <File>
+              <FileName>buzz.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Hardware\buzz.h</FilePath>
             </File>
           </Files>
         </Group>

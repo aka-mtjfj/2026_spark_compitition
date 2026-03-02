@@ -23,4 +23,5 @@ oled_menu/user_rtc.o: user_rtc.c \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h \
-  ..\Hardware\Menu.h
+  ..\Hardware\Menu.h ..\Core\Inc\usart.h ..\Core\Inc\main.h \
+  ..\Hardware\buzz.h

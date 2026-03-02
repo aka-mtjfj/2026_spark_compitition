@@ -4,6 +4,7 @@
 #include "Delay.h"
 #include "tim.h"
 #include "user_rtc.h"
+#include "user_tim.h"
 #include "rtc.h"
 #include "usart.h"
 uint8_t flag=1;
@@ -15,13 +16,14 @@ uint8_t DirectFlag=2;//用于指定动画向上还是向下
 uint8_t timer1_arr[3]={0,15,0};
 uint8_t timer2_arr[3]={0,30,0};
 uint8_t timer3_arr[3]={1,0,0};//参数，具体闹钟函数传参更改
-uint8_t timer_yn[3]={0};//每个闹钟是否开启的标志，全局变量，定时器到时间中断更改这里的状态即可
-uint8_t clock1_arr[3]={7,20,0};
-uint8_t clock2_arr[3]={13,40,0};
-uint8_t clock3_arr[3]={19,25,0};//参数，具体闹钟函数传参更改
+uint8_t timer_yn[3]={2,2,2};//每个闹钟是否开启的标志，全局变量，定时器到时间中断更改这里的状态即可
+uint8_t clock1_arr[3];
+uint8_t clock2_arr[3];//初始化时间在rtc.c中
+uint8_t clock3_arr[3];//参数，具体闹钟函数传参更改
 uint8_t clock_yn[3]={2,2,2};//每个闹钟是否开启的标志，全局变量，定时器到时间中断更改这里的状态即可,开始默认关闭
 uint32_t timer1_cnt=0,timer2_cnt=0,timer3_cnt=0;
 uint32_t clock1_cnt=0,clock2_cnt=0,clock3_cnt=0;
+
 /**
   * @brief ：函数描述:菜单一，用于第一级模式选择
   * @param ：参数描述:无
@@ -68,6 +70,12 @@ uint16_t Menu1()
 				OLED_ShowString(0,0,"定时            ",OLED_8X16);
 				OLED_ShowString(0,16,"闹钟设定        ",OLED_8X16);
 				OLED_ShowString(0,32,"设置            ",OLED_8X16);
+				if(rtc_second_update_flag==1)
+				{
+				OLED_Printf(0,48,OLED_8X16,"    %d:%d:%d      ",Time.Hours,Time.Minutes,Time.Seconds);
+					rtc_second_update_flag=0;
+				}
+				OLED_UpdateArea(0,48,128,16);
 				if(DirectFlag==1)
 				{
 					OLED_Animation(0,16,128,16,0,0,128,16);//实施动画移动,1是减
@@ -83,10 +91,16 @@ uint16_t Menu1()
 				OLED_ShowString(0,0,"定时            ",OLED_8X16);
 				OLED_ShowString(0,16,"闹钟设定        ",OLED_8X16);
 				OLED_ShowString(0,32,"设置            ",OLED_8X16);
+				if(rtc_second_update_flag==1)
+				{
+				OLED_Printf(0,48,OLED_8X16,"    %d:%d:%d      ",Time.Hours,Time.Minutes,Time.Seconds);
+					rtc_second_update_flag=0;
+				}
+				OLED_UpdateArea(0,48,128,16);
 				if(DirectFlag==1)
 				{
 					OLED_Animation(0,32,128,16,0,16,128,16);
-				}
+				}                                                                                   
 				else if(DirectFlag==2)
 				{
 					OLED_Animation(0,0,128,16,0,16,128,16);
@@ -98,6 +112,12 @@ uint16_t Menu1()
 				OLED_ShowString(0,0,"定时            ",OLED_8X16);
 				OLED_ShowString(0,16,"闹钟设定        ",OLED_8X16);
 				OLED_ShowString(0,32,"设置            ",OLED_8X16);
+				if(rtc_second_update_flag==1)
+				{                                                                  
+				OLED_Printf(0,48,OLED_8X16,"    %d:%d:%d      ",Time.Hours,Time.Minutes,Time.Seconds);
+					rtc_second_update_flag=0;
+				}
+				OLED_UpdateArea(0,48,128,16);
 				if(DirectFlag==1)
 				{
 					OLED_Animation(0,48,128,0,0,32,128,16);
@@ -230,10 +250,17 @@ uint8_t Menu3_Clock_Setting(uint8_t* clock_arr)
 		}
 	}
 	if(Clock_setting_OK==1)
-		return 0;
+	{
+		OLED_AnimUpdate();
+		return 0;              
+	}		
 	else if(Clock_setting_OK==2)
 	{
-		OLED_ReverseArea(16,16,16,16);
+		
+	OLED_ShowString(0,0,"<-               ",OLED_8X16);
+	OLED_Printf(0,16,OLED_8X16,"  %2d时%2d分%2d秒         ",tmp_arr[0],tmp_arr[1],tmp_arr[2]);
+	OLED_ShowString(0,48,"  确定    取消  ",OLED_8X16);
+		
 		OLED_DrawLine(16,31,31,31);
 		OLED_UpdateArea(16,16,16,16);//按下确定后块反转变换为底部横线表示可更改，部分更改并更新
 		while(1)
@@ -251,7 +278,7 @@ uint8_t Menu3_Clock_Setting(uint8_t* clock_arr)
 			}
 			else if(Keynum==3)
 			{
-				if(tmp_arr[0]!=23)
+				if(tmp_arr[0]<23)
 					tmp_arr[0]+=1;
 				else
 					tmp_arr[0]=0;
@@ -267,10 +294,13 @@ uint8_t Menu3_Clock_Setting(uint8_t* clock_arr)
 				break;
 			}
 		}
+		Clock_setting_OK=0;
 	}
 		else if(Clock_setting_OK==3)//调节分
 	{
-		OLED_ReverseArea(48,16,16,16);
+			OLED_ShowString(0,0,"<-               ",OLED_8X16);
+	OLED_Printf(0,16,OLED_8X16,"  %2d时%2d分%2d秒         ",tmp_arr[0],tmp_arr[1],tmp_arr[2]);
+	OLED_ShowString(0,48,"  确定    取消  ",OLED_8X16);
 		OLED_DrawLine(48,31,63,31);
 		OLED_UpdateArea(0,16,128,16);//按下确定后块反转变换为底部横线表示可更改，部分更改并更新
 		while(1)
@@ -288,7 +318,7 @@ uint8_t Menu3_Clock_Setting(uint8_t* clock_arr)
 			}
 			else if(Keynum==3)
 			{
-				if(tmp_arr[1]!=59)
+				if(tmp_arr[1]<59)
 					tmp_arr[1]+=1;
 				else
 					tmp_arr[1]=0;
@@ -304,10 +334,13 @@ uint8_t Menu3_Clock_Setting(uint8_t* clock_arr)
 				break;
 			}
 		}
+		Clock_setting_OK=0;
 	}
 			else if(Clock_setting_OK==4)//调节秒
 	{
-		OLED_ReverseArea(80,16,16,16);
+			OLED_ShowString(0,0,"<-               ",OLED_8X16);
+	OLED_Printf(0,16,OLED_8X16,"  %2d时%2d分%2d秒         ",tmp_arr[0],tmp_arr[1],tmp_arr[2]);
+	OLED_ShowString(0,48,"  确定    取消  ",OLED_8X16);
 		OLED_DrawLine(80,31,95,31);
 		OLED_UpdateArea(0,16,128,16);//按下确定后块反转变换为底部横线表示可更改，部分更改并更新
 		while(1)
@@ -315,20 +348,20 @@ uint8_t Menu3_Clock_Setting(uint8_t* clock_arr)
 			Keynum=Key_GetNum();
 			if(Keynum==1)//分钟数字减一
 			{
-				if(tmp_arr[1]!=0)
-					tmp_arr[1]-=1;
+				if(tmp_arr[2]!=0)
+					tmp_arr[2]-=1;
 				else 
-					tmp_arr[1]=59;
+					tmp_arr[2]=59;
 				OLED_Printf(0,16,OLED_8X16,"  %2d时%2d分%2d秒         ",tmp_arr[0],tmp_arr[1],tmp_arr[2]);
 				OLED_DrawLine(80,31,95,31);
 				OLED_UpdateArea(0,16,128,16);//更新显示
 			}
 			else if(Keynum==3)
 			{
-				if(tmp_arr[1]!=59)
-					tmp_arr[1]+=1;
+				if(tmp_arr[2]<59)
+					tmp_arr[2]+=1;
 				else
-					tmp_arr[1]=0;
+					tmp_arr[2]=0;
 				OLED_Printf(0,16,OLED_8X16,"  %2d时%2d分%2d秒         ",tmp_arr[0],tmp_arr[1],tmp_arr[2]);
 				OLED_DrawLine(80,31,95,31);
 				OLED_UpdateArea(0,16,128,16);//更新显示
@@ -341,10 +374,12 @@ uint8_t Menu3_Clock_Setting(uint8_t* clock_arr)
 				break;
 			}
 		}
+		Clock_setting_OK=0;
 	}
 	else if(Clock_setting_OK==5)
 	{
 		//确认并退出
+		OLED_AnimUpdate();
 				for(uint8_t i=0;i<3;i++)//设定闹钟
 		{
 			clock_arr[i]=tmp_arr[i];
@@ -354,7 +389,7 @@ uint8_t Menu3_Clock_Setting(uint8_t* clock_arr)
 		else if(Clock_setting_OK==6)
 	{
 		//取消并退出
-		
+		OLED_AnimUpdate();
 		return 2;
 	}
 }
@@ -488,6 +523,7 @@ if(clock_yn[2]==1)
 		}
 			else	if(Menu3_Flag==2)
 		{
+			Menu3_Flag=0;
 			//设定时间并返回一个确认或取消的返回值，根据这个值继续操作
 			ret=Menu3_Clock_Setting(clock1_arr);//固定传三个定时参数并更改
 			if(ret==1)
@@ -496,39 +532,54 @@ if(clock_yn[2]==1)
 				clock1_cnt=clock1_arr[0]*3600+clock1_arr[1]*60+clock1_arr[2];
 				//设定时间为clock1_arr并启动，此处更改yn数组上面的循环显示会自动标上 * 标识符
 				//这里直接将确认数组置一，此时只匹配时间，不匹配日期
+				//每次设定后存进备份寄存器
+				HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR2, (uint16_t)clock1_arr[0]);//存闹钟一的时
+				HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR3, (uint16_t)clock1_arr[1]);//存闹钟一的分
+				HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR4, (uint16_t)clock1_arr[2]);//存闹钟一的秒
 			}
-			else if(ret==2)
+			else if(ret==2||ret==0)
 			{
 				clock_yn[0]=2;//第一行返回的话是0，但不对确认数组做处理
 
 			}
+			
 		}
 			else	if(Menu3_Flag==3)
 		{
+			Menu3_Flag=0;
 			ret=Menu3_Clock_Setting(clock2_arr);
 						if(ret==1)
 			{
-				clock_yn[0]=1;
+				clock_yn[1]=1;
 				clock2_cnt=clock2_arr[0]*3600+clock2_arr[1]*60+clock2_arr[2];
+				HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR5, (uint16_t)clock2_arr[0]);//存闹钟2的分
+				HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR6, (uint16_t)clock2_arr[1]);//存闹钟2的分
+				HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR7, (uint16_t)clock2_arr[2]);//存闹钟2的分
 			}
-			else if(ret==2)
+			else if(ret==2||ret==0)
 			{
-				clock_yn[0]=2;//第一行返回的话是0，但不对确认数组做处理
+				clock_yn[1]=2;//第一行返回的话是0，但不对确认数组做处理
 
 			}
+			
 		}
 			else	if(Menu3_Flag==4)
 		{
+			Menu3_Flag=0;
 			ret=Menu3_Clock_Setting(clock3_arr);
 						if(ret==1)
 			{
-				clock_yn[0]=1;
+				clock_yn[2]=1;
 				clock3_cnt=clock3_arr[0]*3600+clock3_arr[1]*60+clock3_arr[2];
+				HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR8, (uint16_t)clock3_arr[0]);//存闹钟3的分
+				HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR9, (uint16_t)clock3_arr[1]);//存闹钟3的分
+				HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR10, (uint16_t)clock3_arr[2]);//存闹钟3的分
 			}
-			else if(ret==2)
+			else if(ret==2||ret==0)
 			{
-				clock_yn[0]=2;
+				clock_yn[2]=2;
 			}
+			
 		}
 	}
 }
@@ -790,9 +841,11 @@ uint8_t Menu3_Timer_Setting(uint8_t* timer_arr)
 	}
 	else if(Timer_setting_OK==2)
 	{
-		OLED_ReverseArea(16,16,16,16);
+	OLED_ShowString(0,0,"<-               ",OLED_8X16);
+	OLED_Printf(0,16,OLED_8X16,"  %2d时%2d分%2d秒         ",tmp_arr[0],tmp_arr[1],tmp_arr[2]);
+	OLED_ShowString(0,48,"  确定    取消  ",OLED_8X16);
 		OLED_DrawLine(16,31,31,31);
-		OLED_UpdateArea(16,16,16,16);//按下确定后块反转变换为底部横线表示可更改，部分更改并更新
+		OLED_Update();//按下确定后块反转变换为底部横线表示可更改，部分更改并更新
 		while(1)
 		{
 			keynum=Key_GetNum();
@@ -808,7 +861,7 @@ uint8_t Menu3_Timer_Setting(uint8_t* timer_arr)
 			}
 			else if(keynum==3)
 			{
-				if(tmp_arr[0]!=23)
+				if(tmp_arr[0]<23)
 					tmp_arr[0]+=1;
 				else
 					tmp_arr[0]=0;
@@ -824,12 +877,15 @@ uint8_t Menu3_Timer_Setting(uint8_t* timer_arr)
 				break;
 			}
 		}
+		Timer_setting_OK=0;
 	}
 		else if(Timer_setting_OK==3)//调节分
 	{
-		OLED_ReverseArea(48,16,16,16);
+	OLED_ShowString(0,0,"<-               ",OLED_8X16);
+	OLED_Printf(0,16,OLED_8X16,"  %2d时%2d分%2d秒         ",tmp_arr[0],tmp_arr[1],tmp_arr[2]);
+	OLED_ShowString(0,48,"  确定    取消  ",OLED_8X16);
 		OLED_DrawLine(48,31,63,31);
-		OLED_UpdateArea(0,16,128,16);//按下确定后块反转变换为底部横线表示可更改，部分更改并更新
+		OLED_Update();//按下确定后块反转变换为底部横线表示可更改，部分更改并更新
 		while(1)
 		{
 			keynum=Key_GetNum();
@@ -845,7 +901,7 @@ uint8_t Menu3_Timer_Setting(uint8_t* timer_arr)
 			}
 			else if(keynum==3)
 			{
-				if(tmp_arr[1]!=59)
+				if(tmp_arr[1]<59)
 					tmp_arr[1]+=1;
 				else
 					tmp_arr[1]=0;
@@ -861,31 +917,34 @@ uint8_t Menu3_Timer_Setting(uint8_t* timer_arr)
 				break;
 			}
 		}
+		Timer_setting_OK=0;
 	}
 			else if(Timer_setting_OK==4)//调节秒
 	{
-		OLED_ReverseArea(80,16,16,16);
+	OLED_ShowString(0,0,"<-               ",OLED_8X16);
+	OLED_Printf(0,16,OLED_8X16,"  %2d时%2d分%2d秒         ",tmp_arr[0],tmp_arr[1],tmp_arr[2]);
+	OLED_ShowString(0,48,"  确定    取消  ",OLED_8X16);
 		OLED_DrawLine(80,31,95,31);
-		OLED_UpdateArea(0,16,128,16);//按下确定后块反转变换为底部横线表示可更改，部分更改并更新
+		OLED_Update();//按下确定后块反转变换为底部横线表示可更改，部分更改并更新
 		while(1)
 		{
 			keynum=Key_GetNum();
 			if(keynum==1)//分钟数字减一
 			{
-				if(tmp_arr[1]!=0)
-					tmp_arr[1]-=1;
+				if(tmp_arr[2]!=0)
+					tmp_arr[2]-=1;
 				else 
-					tmp_arr[1]=59;
+					tmp_arr[2]=59;
 				OLED_Printf(0,16,OLED_8X16,"  %2d时%2d分%2d秒         ",tmp_arr[0],tmp_arr[1],tmp_arr[2]);
 				OLED_DrawLine(80,31,95,31);
 				OLED_UpdateArea(0,16,128,16);//更新显示
 			}
 			else if(keynum==3)
 			{
-				if(tmp_arr[1]!=59)
-					tmp_arr[1]+=1;
+				if(tmp_arr[2]<59) 
+					tmp_arr[2]+=1;
 				else
-					tmp_arr[1]=0;
+					tmp_arr[2]=0;
 				OLED_Printf(0,16,OLED_8X16,"  %2d时%2d分%2d秒         ",tmp_arr[0],tmp_arr[1],tmp_arr[2]);
 				OLED_DrawLine(80,31,95,31);
 				OLED_UpdateArea(0,16,128,16);//更新显示
@@ -898,6 +957,7 @@ uint8_t Menu3_Timer_Setting(uint8_t* timer_arr)
 				break;
 			}
 		}
+		Timer_setting_OK=0;
 	}
 	else if(Timer_setting_OK==5)
 	{
@@ -906,11 +966,13 @@ uint8_t Menu3_Timer_Setting(uint8_t* timer_arr)
 		{
 			timer_arr[i]=tmp_arr[i];
 		}
+		OLED_AnimUpdate();
 		return 1;
 	}
 		else if(Timer_setting_OK==6)
 	{
 		//取消并退出
+		OLED_AnimUpdate();
 		return 2;
 	}
 }
@@ -1046,6 +1108,7 @@ if(timer_yn[2]==1)
 		}
 			else	if(Menu3_Flag==2)
 		{
+			
 			//设定时间并返回一个确认或取消的返回值，根据这个值继续操作
 			ret=Menu3_Timer_Setting(timer1_arr);//固定传三个定时参数并更改
 			if(ret==1)
@@ -1078,11 +1141,12 @@ if(timer_yn[2]==1)
 			{
 				timer_yn[1]=2;//第一行返回的话是0，但不对确认数组做处理
 				//关闭定时器，直接使用三个定时器对应，因为及时会闲置也要保证定时功能
-
 			}
+			Menu3_Flag=0;
 		}
 			else	if(Menu3_Flag==4)
 		{
+			Menu3_Flag=0;
 			ret=Menu3_Timer_Setting(timer2_arr);
 						if(ret==1)
 			{
@@ -1099,7 +1163,7 @@ if(timer_yn[2]==1)
 			}
 		}
 		//使用一个定时器，如果一个定时都没有设置就关闭，否则一直开启，三个定时共用一个定时器
-		if(timer_yn[0]==2&&timer_yn[1]==2&&timer_yn[2]==2)
+		if(timer_yn[0]==2&&timer_yn[1]==2&&timer_yn[2]==2&&buzzoff_flag==1)
 		{
 				HAL_TIM_Base_Stop_IT(&htim1);
 				__HAL_TIM_SET_COUNTER(&htim1,0);
