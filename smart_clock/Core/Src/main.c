@@ -103,7 +103,7 @@ int main(void)
 	OLED_Init();
 	Key_Init();
 	HAL_TIM_Base_Start_IT(&htim2);//work for key,don't close
-  /* USER CODE END 2 */
+                                                                                                                                                                                           /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
