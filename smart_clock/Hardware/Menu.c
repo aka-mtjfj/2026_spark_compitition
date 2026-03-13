@@ -69,7 +69,7 @@ uint16_t Menu1()
 			{
 				OLED_ShowString(0,0,"定时            ",OLED_8X16);
 				OLED_ShowString(0,16,"闹钟设定        ",OLED_8X16);
-				OLED_ShowString(0,32,"设置            ",OLED_8X16);
+				OLED_ShowString(0,32,"说明            ",OLED_8X16);
 				if(rtc_second_update_flag==1)
 				{
 				OLED_Printf(0,48,OLED_8X16,"    %d:%d:%d      ",Time.Hours,Time.Minutes,Time.Seconds);
@@ -90,7 +90,7 @@ uint16_t Menu1()
 			{
 				OLED_ShowString(0,0,"定时            ",OLED_8X16);
 				OLED_ShowString(0,16,"闹钟设定        ",OLED_8X16);
-				OLED_ShowString(0,32,"设置            ",OLED_8X16);
+				OLED_ShowString(0,32,"说明            ",OLED_8X16);
 				if(rtc_second_update_flag==1)
 				{
 				OLED_Printf(0,48,OLED_8X16,"    %d:%d:%d      ",Time.Hours,Time.Minutes,Time.Seconds);
@@ -111,7 +111,7 @@ uint16_t Menu1()
 			{
 				OLED_ShowString(0,0,"定时            ",OLED_8X16);
 				OLED_ShowString(0,16,"闹钟设定        ",OLED_8X16);
-				OLED_ShowString(0,32,"设置            ",OLED_8X16);
+				OLED_ShowString(0,32,"说明            ",OLED_8X16);
 				if(rtc_second_update_flag==1)
 				{                                                                  
 				OLED_Printf(0,48,OLED_8X16,"    %d:%d:%d      ",Time.Hours,Time.Minutes,Time.Seconds);
@@ -597,121 +597,28 @@ uint16_t Menu2_Setting()
 	uint8_t Keynum=0;
 	uint8_t Setting_Direct_flag=2;
 	OLED_ShowString(0,0,"<-              ",OLED_8X16);
-	OLED_ShowString(0,16,"省电模式              ",OLED_8X16);
-	OLED_ShowString(0,32,"wifi拓展          ",OLED_8X16);
-	OLED_ShowString(0,48,"关于闹钟             ",OLED_8X16);                                                                                                                                                                                                                                     
+	OLED_ShowString(0,16,"仓库网址:              ",OLED_8X16);
+	OLED_ShowString(0,32,"https://reurl.cc        ",OLED_8X16);
+	OLED_ShowString(0,48,"/A9q5zj                      ",OLED_8X16);   
+	OLED_ReverseArea(0,0,16,16);
 	OLED_Update();
 	OLED_AnimUpdate();
 	while(1)
 	{
-			OLED_ShowString(0,0,"<-              ",OLED_8X16);
-	OLED_ShowString(0,16,"省电模式              ",OLED_8X16);
-	OLED_ShowString(0,32,"wifi拓展          ",OLED_8X16);
-	OLED_ShowString(0,48,"关于闹钟             ",OLED_8X16);//这里的循环每次必须要重写入一次，否则会混乱
+	OLED_ShowString(0,0,"<-              ",OLED_8X16);
+	OLED_ShowString(0,16,"仓库网址:              ",OLED_8X16);
+	OLED_ShowString(0,32,"https://reurl.cc        ",OLED_8X16);
+	OLED_ShowString(0,48,"/A9q5zj                      ",OLED_8X16);   //这里的循环每次必须要重写入一次，否则会混乱
 		 
 		Keynum=Key_GetNum();
-		if(Keynum==1)
-		{
-			Setting_Direct_flag=1;
-			Setting_flag--;
-			if(Setting_flag==0)
-				Setting_flag=SETTING_LAST_CHOOSE;
-			OLED_AnimUpdate();
-		}
-			else	if(Keynum==3)
-		{
-			Setting_flag++;
-			if(Setting_flag==SETTING_LAST_CHOOSE+1)
-				Setting_flag=1;
-			Setting_Direct_flag=2;
-			OLED_AnimUpdate();
-			
-		}
-			else	if(Keynum==5)
+		
+		if(Keynum==5)
 		{
 			OLED_Clear();
 			OLED_Update();
-			Menu3_Flag=Setting_flag;
-			//确定时不需要再做动画显示
-		}
-		
-		switch(Setting_flag)//根据选择做出动画显示
-		{
-			case  1:
-			{
-				if(Setting_Direct_flag==1)
-				{
-					OLED_Animation(0,16,128,16,0,0,128,16);//实施动画移动,1是减
-				}
-				else if(Setting_Direct_flag==2)
-				{
-					OLED_Animation(0,0,128,0,0,0,128,16);
-				}
-				break;
-			}
-					case  2:
-			{
-				if(Setting_Direct_flag==1)
-				{
-					OLED_Animation(0,32,128,16,0,16,128,16);
-				}
-				else if(Setting_Direct_flag==2)
-				{
-					OLED_Animation(0,0,128,16,0,16,128,16);
-				}
-				break;				
-			}
-					case  3:
-			{
-				if(Setting_Direct_flag==1)
-				{
-					OLED_Animation(0,48,128,16,0,32,128,16);
-				}
-				if(Setting_Direct_flag==2)
-				{
-					OLED_Animation(0,16,128,16,0,32,128,16);
-				}
-				break;
-			}
-			case  4:
-			{
-				if(Setting_Direct_flag==1)
-				{
-					OLED_Animation(0,64,128,0,0,48,128,16);
-				}
-				if(Setting_Direct_flag==2)
-				{
-					OLED_Animation(0,32,128,16,0,48,128,16);
-				}
-				break;
-			}
-		}
-		
-		if(Menu3_Flag==1)
-		{
 			OLED_AnimUpdate();
 			return 0;
-		}
-			else	if(Menu3_Flag==2)
-		{
-			//省电功能
-			//
-			//
-			//
-		}
-			else	if(Menu3_Flag==3)
-		{
-			//wifi拓展
-			//
-			//
-			//
-		}
-			else	if(Menu3_Flag==4)
-		{
-			//说明网址
-			//
-			//
-			//
+			//确定时不需要再做动画显示
 		}
 
 	}
@@ -1147,7 +1054,7 @@ if(timer_yn[2]==1)
 			else	if(Menu3_Flag==4)
 		{
 			Menu3_Flag=0;
-			ret=Menu3_Timer_Setting(timer2_arr);
+			ret=Menu3_Timer_Setting(timer3_arr);
 						if(ret==1)
 			{
 				timer_yn[2]=1;

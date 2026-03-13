@@ -95,6 +95,7 @@ if(HAL_RTCEx_BKUPRead(&hrtc,RTC_BKP_DR1)!= 0x5051)
 	clock3_arr[0]=19;
 	clock3_arr[1]=30;
 	clock3_arr[2]=0;
+	
   }
 	else
 	{
