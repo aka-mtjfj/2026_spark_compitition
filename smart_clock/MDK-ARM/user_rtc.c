@@ -1,6 +1,7 @@
 #include "stm32f1xx.h"  
 #include "Menu.h"
 #include "usart.h"
+#include "oled.h"
 #include "buzz.h"
     RTC_TimeTypeDef Time;// 定义全局时间/日期结构体
     RTC_DateTypeDef Date;
@@ -75,6 +76,8 @@ void HAL_RTCEx_RTCEventCallback(RTC_HandleTypeDef *hrtc)
 			buzz_cnt3++;
 		}
 		rtc_second_update_flag = 1;
+		
+		OLED_UpdateArea(0,48,128,16);
 	}
 	
 }

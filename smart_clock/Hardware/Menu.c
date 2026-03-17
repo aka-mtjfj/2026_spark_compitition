@@ -75,7 +75,7 @@ uint16_t Menu1()
 				OLED_Printf(0,48,OLED_8X16,"    %d:%d:%d      ",Time.Hours,Time.Minutes,Time.Seconds);
 					rtc_second_update_flag=0;
 				}
-				OLED_UpdateArea(0,48,128,16);
+				
 				if(DirectFlag==1)
 				{
 					OLED_Animation(0,16,128,16,0,0,128,16);//实施动画移动,1是减
@@ -96,7 +96,7 @@ uint16_t Menu1()
 				OLED_Printf(0,48,OLED_8X16,"    %d:%d:%d      ",Time.Hours,Time.Minutes,Time.Seconds);
 					rtc_second_update_flag=0;
 				}
-				OLED_UpdateArea(0,48,128,16);
+				
 				if(DirectFlag==1)
 				{
 					OLED_Animation(0,32,128,16,0,16,128,16);
@@ -117,7 +117,7 @@ uint16_t Menu1()
 				OLED_Printf(0,48,OLED_8X16,"    %d:%d:%d      ",Time.Hours,Time.Minutes,Time.Seconds);
 					rtc_second_update_flag=0;
 				}
-				OLED_UpdateArea(0,48,128,16);
+				
 				if(DirectFlag==1)
 				{
 					OLED_Animation(0,48,128,0,0,32,128,16);
@@ -128,7 +128,9 @@ uint16_t Menu1()
 				}
 				break;
 			}
+			
 		}
+		
 	}
 }
 /**
